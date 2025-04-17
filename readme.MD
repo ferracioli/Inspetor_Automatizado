@@ -1,4 +1,9 @@
-Para abrir o markdown: control + shift + v
+<!-- Para abrir o markdown: control + shift + v -->
+
+`pip install -r requirements.txt`
+`python main.py --repo /caminho/para/repositorio --interval 300`
+O agente começará a monitorar o repositório e validar arquivos Python novos/modificados a cada 5 minutos (300 segundos)
+
 
 ## Dias 12-14
 - Teste o agente em projetos reais da sua empresa
