@@ -1,6 +1,11 @@
 <!-- Para abrir o markdown: control + shift + v -->
 
 `pip install -r requirements.txt`
+
+Caso os parâmetros estejam em config.py:
+`python main.py`
+
+Caso queira passar os parâmetros manualmente:
 `python main.py --repo /caminho/para/repositorio --interval 300`
 O agente começará a monitorar o repositório e validar arquivos Python novos/modificados a cada 5 minutos (300 segundos)
 

@@ -2,6 +2,11 @@
 # Desenvolva prompts especializados para análise de código
 # Crie a lógica de tomada de decisão baseada nos resultados
 
+from agent.tools.security_tools import SecurityAnalyzer
+from agent.tools.style_tools import StyleAnalyzer
+from agent.tools.documentation_tools import DocumentationAnalyzer
+
+
 from langchain.agents import initialize_agent, Tool
 from langchain.llms import OpenAI
 from langchain.memory import ConversationBufferMemory
@@ -11,6 +16,11 @@ class CodeValidatorAgent:
         self.llm = OpenAI(temperature=0, api_key=api_key)
         self.memory = ConversationBufferMemory(memory_key="chat_history")
         
+        # Inicialize os analisadores aqui!
+        self.security_analyzer = SecurityAnalyzer()  # <-- Adicione
+        self.style_analyzer = StyleAnalyzer()        # <-- Adicione
+        self.doc_analyzer = DocumentationAnalyzer()  # <-- Adicione
+
         self.tools = [
             Tool(
                 name="SecurityAnalyzer",

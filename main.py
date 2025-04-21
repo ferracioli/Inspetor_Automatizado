@@ -6,12 +6,20 @@ import os
 import time
 import argparse
 from agent.code_validator import CodeValidatorAgent
-from integrations.git_integration import GitHandler
+from integrations.git_integrations import GitHandler
 
-def monitor_repository(repo_path, interval=300):
+from config import OPENAI_API_KEY
+from config import REPO_PATH
+
+# def monitor_repository(repo_path, interval=300):
+def monitor_repository(repo_path="./", interval=300):
     """Monitora um repositório periodicamente e valida novos arquivos."""
-    agent = CodeValidatorAgent(os.getenv("OPENAI_API_KEY"))
-    git_handler = GitHandler(repo_path)
+
+    print("Iniciando código")
+
+    agent = CodeValidatorAgent(OPENAI_API_KEY)
+    # git_handler = GitHandler(repo_path)
+    git_handler = GitHandler(REPO_PATH)
     
     processed_files = set()
     
@@ -56,7 +64,8 @@ def monitor_repository(repo_path, interval=300):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Agente de Validação de Código Python")
-    parser.add_argument("--repo", required=True, help="Caminho para o repositório Git")
+    # parser.add_argument("--repo", required=True, help="Caminho para o repositório Git")
+    parser.add_argument("--repo", default="./", help="Caminho para o repositório Git")
     parser.add_argument("--interval", type=int, default=300, help="Intervalo de verificação em segundos")
     
     args = parser.parse_args()
