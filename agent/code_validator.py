@@ -1,8 +1,3 @@
-# Integre o LLM como "cérebro" do agente
-# Desenvolva prompts especializados para análise de código
-# Crie a lógica de tomada de decisão baseada nos resultados
-
-
 from agent.tools.security_tools import SecurityAnalyzer
 from agent.tools.style_tools import StyleAnalyzer
 from agent.tools.documentation_tools import DocumentationAnalyzer
@@ -10,14 +5,11 @@ from agent.tools.documentation_tools import DocumentationAnalyzer
 from langchain.agents import initialize_agent, Tool
 from langchain.memory import ConversationBufferMemory
 
-# Importe o wrapper customizado
-from agent.llms.free_llm import FreeLLM
+from agent.llms.openrouter_llm import OpenRouterLLM
 
 class CodeValidatorAgent:
-    def __init__(self):
-        # Inicializa o LLM gratuito (sem chave)
-        self.llm = FreeLLM()
-
+    def __init__(self, api_key):
+        self.llm = OpenRouterLLM(api_key=api_key)
         self.memory = ConversationBufferMemory(memory_key="chat_history")
         
         self.security_analyzer = SecurityAnalyzer()

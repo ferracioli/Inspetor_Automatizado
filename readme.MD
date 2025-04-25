@@ -1,4 +1,5 @@
 <!-- Para abrir o markdown: control + shift + v -->
+Peguei a api gratuitamente no openrouter
 
 `pip install -r requirements.txt`
 
