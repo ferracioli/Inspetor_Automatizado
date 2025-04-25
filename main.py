@@ -8,7 +8,7 @@ import argparse
 from agent.code_validator import CodeValidatorAgent
 from integrations.git_integrations import GitHandler
 
-from config import OPENAI_API_KEY
+from config import API_KEY
 from config import REPO_PATH
 
 # def monitor_repository(repo_path, interval=300):
@@ -17,7 +17,8 @@ def monitor_repository(repo_path="./", interval=300):
 
     print("Iniciando código")
 
-    agent = CodeValidatorAgent(OPENAI_API_KEY)
+    # agent = CodeValidatorAgent(OPENAI_API_KEY)
+    agent = CodeValidatorAgent(api_key=API_KEY)
     # git_handler = GitHandler(repo_path)
     git_handler = GitHandler(REPO_PATH)
     
