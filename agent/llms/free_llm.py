@@ -1,11 +1,13 @@
 import requests
 from langchain.schema import LLMResult, Generation
 from langchain.llms.base import LLM
+from typing import ClassVar
 
 class FreeLLM(LLM):
     """Wrapper simples para uma API gratuita de LLM via HTTP GET."""
 
-    api_url: str = "https://free-unoficial-gpt4o-mini-api-g70n.onrender.com/chat/"
+    # api_url: str = 'https://openrouter.ai/api/v1/chat/completions'
+    api_url: ClassVar[str] = 'https://openrouter.ai/api/v1/chat/completions'
 
     def _call(self, prompt: str, stop=None) -> str:
         try:

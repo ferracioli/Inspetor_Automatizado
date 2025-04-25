@@ -9,7 +9,8 @@ from agent.llms.openrouter_llm import OpenRouterLLM
 
 class CodeValidatorAgent:
     def __init__(self, api_key):
-        self.llm = OpenRouterLLM(api_key=api_key)
+        # self.llm = OpenRouterLLM(api_key=api_key)
+        self.llm = OpenRouterLLM()
         self.memory = ConversationBufferMemory(memory_key="chat_history")
         
         self.security_analyzer = SecurityAnalyzer()
