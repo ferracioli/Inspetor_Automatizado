@@ -6,3 +6,7 @@ gitpython==3.1.42
 langchain
 SQLAlchemy
 langchain-community
+
+# requests 
+# playsound==1.2.2 
+# tkinter
