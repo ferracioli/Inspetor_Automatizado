@@ -8,8 +8,7 @@ from langchain.memory import ConversationBufferMemory
 from agent.llms.openrouter_llm import OpenRouterLLM
 
 class CodeValidatorAgent:
-    def __init__(self, api_key):
-        # self.llm = OpenRouterLLM(api_key=api_key)
+    def __init__(self):
         self.llm = OpenRouterLLM()
         self.memory = ConversationBufferMemory(memory_key="chat_history")
         
@@ -17,23 +16,24 @@ class CodeValidatorAgent:
         self.style_analyzer = StyleAnalyzer()
         self.doc_analyzer = DocumentationAnalyzer()
 
-        self.tools = [
-            Tool(
-                name="SecurityAnalyzer",
-                func=self.security_analyzer.analyze_code,
-                description="Analisa o código em busca de vulnerabilidades de segurança"
-            ),
-            Tool(
-                name="StyleAnalyzer", 
-                func=self.style_analyzer.analyze_code,
-                description="Verifica o estilo e legibilidade do código"
-            ),
-            Tool(
-                name="DocumentationAnalyzer",
-                func=self.doc_analyzer.analyze_documentation,
-                description="Avalia a qualidade e completude da documentação do código"
-            )
-        ]
+        self.tools = []
+        # self.tools = [
+        #     Tool(
+        #         name="SecurityAnalyzer",
+        #         func=self.security_analyzer.analyze_code,
+        #         description="Analisa o código em busca de vulnerabilidades de segurança"
+        #     ),
+        #     Tool(
+        #         name="StyleAnalyzer", 
+        #         func=self.style_analyzer.analyze_code,
+        #         description="Verifica o estilo e legibilidade do código"
+        #     ),
+        #     Tool(
+        #         name="DocumentationAnalyzer",
+        #         func=self.doc_analyzer.analyze_documentation,
+        #         description="Avalia a qualidade e completude da documentação do código"
+        #     )
+        # ]
         
         self.agent = initialize_agent(
             self.tools, 
@@ -42,25 +42,43 @@ class CodeValidatorAgent:
             memory=self.memory,
             verbose=True
         )
-        
-    def validate_code(self, code, context=None):
+
+    def validate_code(self, code, context=None, callback=None, file_path=None):
         prompt = self._build_validation_prompt(code, context)
-        return self.agent.run(prompt)
-    
+        print("validate_code da code_validator.py")
+
+        # Se não passou callback, executa normalmente (sem streaming)
+        if callback is None:
+            return self.agent.run(prompt)
+
+        # Streaming com callback
+        # Supondo que self.llm tem método `stream` que gera tokens
+        full_response = ""
+        for token in self.llm.stream(prompt):
+            full_response += token
+
+        # print("full_response")
+        # print(full_response)
+        callback(full_response, file_path)
+
+        return full_response
+
+        
     def _build_validation_prompt(self, code, context):
         return f"""
-        Analise o seguinte código Python e identifique problemas relacionados a:
-        1. Segurança
+        Analise o seguinte codigo Python e identifique problemas relacionados a:
+        1. Seguranca
         2. Estilo e legibilidade
-        3. Documentação e manutenibilidade
+        3. Documentacao e manutenibilidade
         
-        Utilize as ferramentas disponíveis para fazer uma análise profunda.
-        Depois, forneça um relatório detalhado com problemas encontrados e sugestões
-        de melhorias concretas.
+        Utilize as ferramentas disponiveis para fazer uma analise profunda.
+        Depois, forneca um relatorio detalhado com problemas encontrados e sugestoes
+        de melhorias concretas, mas não amplie o código para operacoes que ele ainda
+        nao faz no momento.
         
         Contexto adicional: {context or 'Nenhum contexto adicional fornecido.'}
         
-        Código:
+        Codigo:
         ```
         {code}
         ```

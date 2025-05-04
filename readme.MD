@@ -1,28 +1,13 @@
 <!-- Para abrir o markdown: control + shift + v -->
-Peguei a api gratuitamente no openrouter
+Este código acessa modelos de LLM disponíveis no Open Router, e deixa o agente sendo executado em uma janela separada. A cada X segundos(definido em 300 como padrão), ele verifica novos códigos no repositório apresentado no config.py, indicando sugestões de melhorias relacionadas a segurança, legibilidade e documentação.Etapas:
 
+1) No primeiro acesso, instale as bibliotecas necessárias
 `pip install -r requirements.txt`
 
-Caso os parâmetros estejam em config.py:
+2) Caso os parâmetros estejam em config.py:
 `python main.py`
 
-Caso queira passar os parâmetros manualmente:
+3) Selecione "iniciar monitoramento" e deixe ele agindo de maneira passiva
+
+4) Caso queira, é possível passar os parâmetros manualmente:
 `python main.py --repo /caminho/para/repositorio --interval 300`
-O agente começará a monitorar o repositório e validar arquivos Python novos/modificados a cada 5 minutos (300 segundos)
-
-
-## Dias 12-14
-- Teste o agente em projetos reais da sua empresa
-- Refine prompts e lógica de análise com base nos testes
-- Prepare a documentação e apresentação para o concurso
-- Crie exemplos demonstrativos para apresentação
-
-## Estrutura Final do MVP
-O MVP se concentrará em demonstrar os quatro aspectos principais que definem um sistema Agentic AI:
-- Autonomia: O agente monitora automaticamente repositórios e inicia validações
-- Uso de Ferramentas: Integra ferramentas reais de análise de código (Bandit, Pylint)
-- Tomada de Decisão: Analisa resultados e determina problemas prioritários
-- Ação: Gera relatórios detalhados e sugestões de melhoria
-
-## Variáveis de ambiente:
-`OPENAI_API_KEY=sk-...  # Sua chave API OpenAI`
