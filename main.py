@@ -2,23 +2,21 @@
 import sys
 sys.stdout.reconfigure(encoding='utf-8')
 
-import os
 import time
 import threading
 import tkinter as tk
-from tkinter import scrolledtext, messagebox
+from tkinter import scrolledtext
 from argparse import ArgumentParser
 from playsound import playsound
 from agent.code_validator import CodeValidatorAgent
 from integrations.git_integrations import GitHandler
-from config import API_KEY, REPO_PATH
+from config import REPO_PATH
 
 class CodeSentinelGUI(tk.Tk):
     def __init__(self, repo_path, interval):
         super().__init__()
         self.repo_path = repo_path
         self.interval = interval
-        # self.agent = CodeValidatorAgent(api_key=API_KEY)
         self.agent = CodeValidatorAgent()
         self.git_handler = GitHandler(REPO_PATH)
         self.processed_files = set()
