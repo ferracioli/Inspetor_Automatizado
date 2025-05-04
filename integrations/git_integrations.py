@@ -1,7 +1,3 @@
-# Desenvolva a capacidade de ler e processar arquivos Python;
-# Implemente um parser simples para extrair estruturas básicas de código
-# Configure a integração básica com repositório Git local
-
 from git import Repo
 import os
 
