@@ -18,13 +18,14 @@ class CodeSentinelGUI(tk.Tk):
         super().__init__()
         self.repo_path = repo_path
         self.interval = interval
-        self.agent = CodeValidatorAgent(api_key=API_KEY)
+        # self.agent = CodeValidatorAgent(api_key=API_KEY)
+        self.agent = CodeValidatorAgent()
         self.git_handler = GitHandler(REPO_PATH)
         self.processed_files = set()
         self.running = False
         
         self.title("CodeSentinel AI - Monitoramento em Tempo Real")
-        self.geometry("1000x700")
+        self.geometry("600x500")
         self._setup_ui()
         self._setup_bindings()
         
@@ -93,7 +94,8 @@ class CodeSentinelGUI(tk.Tk):
         """Verifica novos arquivos no repositório"""
         python_files = self.git_handler.get_latest_python_files()
         new_files = [f for f in python_files if f not in self.processed_files]
-        
+        # playsound('sound.wav')
+
         if new_files:
             self._log_info(f"Encontrados {len(new_files)} novos arquivos para validar")
             for file_path in new_files:
@@ -130,6 +132,7 @@ class CodeSentinelGUI(tk.Tk):
         self.logs_area.insert(tk.END, f"[{file_path}] {chunk}")
         self.logs_area.see(tk.END)
         self.update_idletasks()
+        self._trigger_alert()
         
         # Verifica alertas críticos
         if any(kw in chunk.lower() for kw in {'critical', 'security', 'error'}):
@@ -138,7 +141,7 @@ class CodeSentinelGUI(tk.Tk):
     def _trigger_alert(self):
         """Dispara alerta sonoro e visual"""
         try:
-            playsound('alert.wav')
+            playsound('sound.wav')
             self.logs_area.tag_add('alert', 'end-1c linestart', 'end-1c lineend')
             self.logs_area.tag_config('alert', background='#ffcccc')
         except Exception as e:
@@ -165,71 +168,3 @@ if __name__ == "__main__":
     
     app = CodeSentinelGUI(args.repo, args.interval)
     app.mainloop()
-
-
-# import os
-# import time
-# import argparse
-# from agent.code_validator import CodeValidatorAgent
-# from integrations.git_integrations import GitHandler
-
-# from config import API_KEY
-# from config import REPO_PATH
-
-# def monitor_repository(repo_path="./", interval=300):
-#     """Monitora um repositório periodicamente e valida novos arquivos."""
-
-#     print("Iniciando código")
-
-#     agent = CodeValidatorAgent(api_key=API_KEY)
-#     git_handler = GitHandler(REPO_PATH)
-    
-#     processed_files = set()
-    
-#     print(f"Iniciando monitoramento do repositório: {repo_path}")
-#     print(f"O agente verificará novos arquivos a cada {interval} segundos")
-    
-#     try:
-#         while True:
-#             print("\nVerificando novos arquivos Python...")
-#             python_files = git_handler.get_latest_python_files()
-            
-#             new_files = [f for f in python_files if f not in processed_files]
-#             if new_files:
-#                 print(f"Encontrados {len(new_files)} novos arquivos para validar")
-                
-#                 for file_path in new_files:
-#                     print(f"\nValidando: {file_path}")
-#                     code = git_handler.get_file_content(file_path)
-                    
-#                     if code:
-#                         result = agent.validate_code(
-#                             code, 
-#                             context=f"Arquivo: {file_path}"
-#                         )
-                        
-#                         # Aqui o agente toma a ação de salvar resultados
-#                         print(f"Resultado da validação para {file_path}:")
-#                         print(result)
-                        
-#                         # Adiciona à lista de processados
-#                         processed_files.add(file_path)
-#                     else:
-#                         print(f"Não foi possível ler o arquivo: {file_path}")
-#             else:
-#                 print("Nenhum novo arquivo para validar")
-                
-#             print(f"Aguardando {interval} segundos até a próxima verificação...")
-#             time.sleep(interval)
-    
-#     except KeyboardInterrupt:
-#         print("\nMonitoramento interrompido pelo usuário")
-
-# if __name__ == "__main__":
-#     parser = argparse.ArgumentParser(description="Agente de Validação de Código Python")
-#     # parser.add_argument("--repo", required=True, help="Caminho para o repositório Git")
-#     parser.add_argument("--repo", default="./", help="Caminho para o repositório Git")
-#     parser.add_argument("--interval", type=int, default=300, help="Intervalo de verificação em segundos")
-    
-#     args = parser.parse_args()
-#     monitor_repository(args.repo, args.interval)
