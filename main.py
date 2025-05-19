@@ -7,7 +7,6 @@ import threading
 import tkinter as tk
 from tkinter import scrolledtext
 from argparse import ArgumentParser
-from playsound import playsound
 from agent.code_validator import CodeValidatorAgent
 from integrations.git_integrations import GitHandler
 from config import REPO_PATH
@@ -15,6 +14,7 @@ from config import REPO_PATH
 class CodeSentinelGUI(tk.Tk):
     def __init__(self, repo_path, interval):
         super().__init__()
+        self.withdraw()
         self.repo_path = repo_path
         self.interval = interval
         self.agent = CodeValidatorAgent()
@@ -23,7 +23,7 @@ class CodeSentinelGUI(tk.Tk):
         self.running = False
         
         self.title("CodeSentinel AI - Monitoramento em Tempo Real")
-        self.geometry("600x500")
+        self.geometry("0x0")
         self._setup_ui()
         self._setup_bindings()
         
@@ -92,17 +92,17 @@ class CodeSentinelGUI(tk.Tk):
         """Verifica novos arquivos no repositório"""
         python_files = self.git_handler.get_latest_python_files()
         new_files = [f for f in python_files if f not in self.processed_files]
-        # playsound('sound.wav')
 
         if new_files:
+            # playsound('sound.wav')
             self._log_info(f"Encontrados {len(new_files)} novos arquivos para validar")
-            for file_path in new_files:
-                self._process_file(file_path)
+            for filename in new_files:
+                self._process_file(filename)
     
-    def _process_file(self, file_path):
+    def _process_file(self, filename):
         """Processa e valida um arquivo individual"""
-        self._log_info(f"Validando: {file_path}")
-        code = self.git_handler.get_file_content(file_path)
+        self._log_info(f"Validando: {REPO_PATH + '/' + filename}")
+        code = self.git_handler.get_file_content(REPO_PATH + '/' + filename)
         
         if code:
             try:
@@ -114,16 +114,14 @@ class CodeSentinelGUI(tk.Tk):
                 # Chama a validação com streaming
                 self.agent.validate_code(
                     code,
-                    context=f"Arquivo: {file_path}",
-                    callback=self._handle_stream_response,
-                    file_path=file_path
-
+                    context=f"file: {REPO_PATH + '/' + filename}",
                 )
-                self.processed_files.add(file_path)
+                print('terminou a validate_code')
+                self.processed_files.add(REPO_PATH + '/' + filename)
             except Exception as e:
                 self._log_error(f"Erro na validação: {str(e)}")
         else:
-            self._log_warning(f"Não foi possível ler o arquivo: {file_path}")
+            self._log_warning(f"Não foi possível ler o arquivo: {filename}")
     
     def _handle_stream_response(self, chunk, file_path):
         """Manipula a resposta em tempo real do agente"""
@@ -139,30 +137,33 @@ class CodeSentinelGUI(tk.Tk):
     def _trigger_alert(self):
         """Dispara alerta sonoro e visual"""
         try:
-            playsound('sound.wav')
+            # playsound('sound.wav')
             self.logs_area.tag_add('alert', 'end-1c linestart', 'end-1c lineend')
             self.logs_area.tag_config('alert', background='#ffcccc')
         except Exception as e:
             self._log_error(f"Erro no alerta: {str(e)}")
     
     def _log_info(self, message):
-        self.logs_area.insert(tk.END, f"[INFO] {message}\n")
+        print(f"[INFO] {message}\n")
     
     def _log_warning(self, message):
-        self.logs_area.insert(tk.END, f"[WARN] {message}\n", 'warning')
+        print(f"[WARN] {message}\n")
     
     def _log_error(self, message):
-        self.logs_area.insert(tk.END, f"[ERRO] {message}\n", 'error')
+        print(f"[ERRO] {message}\n")
     
     def _log_success(self, message):
-        self.logs_area.insert(tk.END, f"[SUCESSO] {message}\n", 'success')
+        print(f"[SUCESSO] {message}\n")
 
 if __name__ == "__main__":
     parser = ArgumentParser(description="Agente de Validação de Código Python")
-    parser.add_argument("--repo", default="./", help="Caminho para o repositório Git")
+    parser.add_argument("--repo", default="/home/olavo/repotest", help="Caminho para o repositório Git")
     parser.add_argument("--interval", type=int, default=300, help="Intervalo de verificação em segundos")
     
     args = parser.parse_args()
-    
+
     app = CodeSentinelGUI(args.repo, args.interval)
+    app.toggle_monitoring()
     app.mainloop()
+
+    
